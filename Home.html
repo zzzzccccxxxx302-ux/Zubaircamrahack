@@ -1,1 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZubaIR AI - Super AI Communication System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #111827 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: rgba(31, 41, 55, 0.95);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            background: rgba(31, 41, 55, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CHAT SECTION */
+        .chat-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .chat-list {
+            width: 300px;
+            background: rgba(31, 41, 55, 0.6);
+            border-radius: 12px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .chat-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .chat-item:hover,
+        .chat-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border-left-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .chat-window {
+            flex: 1;
+            background: rgba(31, 41, 55, 0.6);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .message.ai .message-content {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .message.user .message-content {
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        /* AI CALL SYSTEM */
+        .call-window {
+            background: rgba(31, 41, 55, 0.8);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .caller-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .caller-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .call-status {
+            color: #9ca3af;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .call-duration {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .call-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .call-btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .call-btn.mute {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+        }
+
+        .call-btn.mute:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .call-btn.speaker {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+        }
+
+        .call-btn.speaker:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .call-btn.end {
+            background: var(--danger);
+            color: white;
+        }
+
+        .call-btn.end:hover {
+            background: #dc2626;
+        }
+
+        /* MESSAGING SECTION */
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .msg-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateX(5px);
+        }
+
+        .msg-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .msg-content {
+            flex: 1;
+        }
+
+        .msg-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .msg-preview {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        /* NOTES SECTION */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .note-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .note-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .note-text {
+            color: #d1d5db;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .note-date {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* SECURITY FEATURES */
+        .security-section {
+            background: rgba(31, 41, 55, 0.6);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .security-item:last-child {
+            border-bottom: none;
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .security-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: #4b5563;
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-slider {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            left: 24px;
+        }
+
+        /* CARD GRID */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .content-wrapper {
+                padding: 15px;
+            }
+
+            .chat-container {
+                flex-direction: column;
+            }
+
+            .chat-list {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                padding: 10px;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+
+            .header {
+                padding: 10px 15px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-container {
+                flex-direction: column;
+            }
+
+            .chat-list {
+                width: 100%;
+            }
+
+            .message-content {
+                max-width: 100%;
+            }
+        }
+
+        /* LOADING ANIMATION */
+        .typing {
+            display: flex;
+            gap: 4px;
+            margin: 5px 0;
+        }
+
+        .typing span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* BADGE */
+        .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: var(--success);
+        }
+
+        .badge.danger {
+            background: var(--danger);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span>ZubaIR AI</span>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="showSection('home')">
+                        <span class="nav-icon">🏠</span>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('chat')">
+                        <span class="nav-icon">💬</span>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('call')">
+                        <span class="nav-icon">📞</span>
+                        <span>AI Call</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('messaging')">
+                        <span class="nav-icon">📨</span>
+                        <span>Messages</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('notes')">
+                        <span class="nav-icon">📝</span>
+                        <span>Notes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('social')">
+                        <span class="nav-icon">👥</span>
+                        <span>Social</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('vault')">
+                        <span class="nav-icon">🔒</span>
+                        <span>Vault</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('settings')">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-title" id="pageTitle">Welcome to ZubaIR AI</div>
+                <div class="header-actions">
+                    <button class="btn-icon">🔔</button>
+                    <button class="btn-icon">🌙</button>
+                    <button class="btn-icon">👤</button>
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content-wrapper">
+                <!-- HOME SECTION -->
+                <div id="home" class="section active">
+                    <h2 style="margin-bottom: 30px;">Welcome, User! 👋</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">Messages Today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">48</div>
+                            <div class="stat-label">AI Interactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Calls Connected</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">89</div>
+                            <div class="stat-label">Notes Saved</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 20px;">🚀 Key Features</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="showSection('chat')">
+                            <div class="feature-icon">🤖</div>
+                            <div class="feature-title">Super AI Chat</div>
+                            <div class="feature-desc">Chat with advanced AI powered by Google AI. Get instant answers, code help, image generation & more</div>
+                        </div>
+                        <div class="feature-card" onclick="showSection('call')">
+                            <div class="feature-icon">☎️</div>
+                            <div class="feature-title">AI Call System</div>
+                            <div class="feature-desc">Crystal clear calls with advanced AI. Voice recognition, real-time translation, and smart routing</div>
+                        </div>
+                        <div class="feature-card" onclick="showSection('messaging')">
+                            <div class="feature-icon">✉️</div>
+                            <div class="feature-title">Smart Messaging</div>
+                            <div class="feature-desc">Send messages with text, images, voice, video, and emoji. Group chats with unlimited members</div>
+                        </div>
+                        <div class="feature-card" onclick="showSection('notes')">
+                            <div class="feature-icon">📓</div>
+                            <div class="feature-title">Smart Notes</div>
+                            <div class="feature-desc">Create, edit, and organize notes. Lock sensitive notes and export as PDF</div>
+                        </div>
+                        <div class="feature-card" onclick="showSection('vault')">
+                            <div class="feature-icon">🔐</div>
+                            <div class="feature-title">Secure Vault</div>
+                            <div class="feature-desc">Hide photos, videos, and files with fingerprint lock. Maximum privacy guaranteed</div>
+                        </div>
+                        <div class="feature-card" onclick="showSection('social')">
+                            <div class="feature-icon">🌍</div>
+                            <div class="feature-title">Social Hub</div>
+                            <div class="feature-desc">Share stories, post videos, livestream, and connect with your community</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHAT SECTION -->
+                <div id="chat" class="section">
+                    <div class="chat-container">
+                        <div class="chat-list">
+                            <div style="margin-bottom: 15px; font-weight: 600;">Recent Chats</div>
+                            <div class="chat-item active">
+                                <div>🤖 Super AI</div>
+                                <div style="font-size: 12px; color: #9ca3af;">Active now</div>
+                            </div>
+                            <div class="chat-item">
+                                <div>🔤 Code Helper</div>
+                                <div style="font-size: 12px; color: #9ca3af;">Yesterday</div>
+                            </div>
+                            <div class="chat-item">
+                                <div>🎨 Image Generator</div>
+                                <div style="font-size: 12px; color: #9ca3af;">2 days ago</div>
+                            </div>
+                            <div class="chat-item">
+                                <div>🗣️ Translator</div>
+                                <div style="font-size: 12px; color: #9ca3af;">3 days ago</div>
+                            </div>
+                        </div>
+
+                        <div class="chat-window">
+                            <div class="messages">
+                                <div class="message ai">
+                                    <div class="message-content">
+                                        👋 Hello! I'm ZubaIR Super AI. How can I help you today?
+                                    </div>
+                                </div>
+                                <div class="message ai">
+                                    <div class="message-content">
+                                        I can:
+                                        • Answer any question
+                                        • Write and debug code
+                                        • Generate images
+                                        • Translate languages
+                                        • Process PDFs
+                                        • Create content
+                                        • And much more!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" placeholder="Ask me anything..." id="chatInput">
+                                <button class="btn-primary" onclick="sendMessage()">
+                                    <span>Send</span>
+                                </button>
+                                <button class="btn-icon">📎</button>
+                                <button class="btn-icon">🎙️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CALL SECTION -->
+                <div id="call" class="section">
+                    <div class="call-window">
+                        <div class="caller-avatar">☎️</div>
+                        <div class="caller-name">ZubaIR AI Assistant</div>
+                        <div class="call-status">Incoming Call...</div>
+                        <div class="call-duration" id="callDuration">00:00</div>
+                        
+                        <div class="call-controls">
+                            <button class="call-btn mute" onclick="toggleMute()">🔇</button>
+                            <button class="call-btn speaker" onclick="toggleSpeaker()">📢</button>
+                        </div>
+
+                        <div style="display: flex; gap: 15px; justify-content: center;">
+                            <button class="btn-primary" style="flex: 1; justify-content: center;" onclick="acceptCall()">
+                                ✓ Accept Call
+                            </button>
+                            <button class="btn-primary" style="flex: 1; justify-content: center; background: var(--danger);" onclick="rejectCall()">
+                                ✕ Reject Call
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--border); text-align: left;">
+                            <h3 style="margin-bottom: 15px;">📋 Call Features:</h3>
+                            <ul style="list-style: none; color: #d1d5db; font-size: 13px;">
+                                <li style="margin-bottom: 8px;">✓ Crystal Clear Audio Quality (HD)</li>
+                                <li style="margin-bottom: 8px;">✓ Real-time Voice Translation</li>
+                                <li style="margin-bottom: 8px;">✓ Noise Cancellation Technology</li>
+                                <li style="margin-bottom: 8px;">✓ Call Recording & Playback</li>
+                                <li style="margin-bottom: 8px;">✓ Screen Sharing Support</li>
+                                <li style="margin-bottom: 8px;">✓ Group Call (Up to 100 people)</li>
+                                <li style="margin-bottom: 8px;">✓ Emergency Connect Feature</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MESSAGING SECTION -->
+                <div id="messaging" class="section">
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn-primary" onclick="startNewMessage()">
+                            ✎ New Message
+                        </button>
+                    </div>
+
+                    <h3 style="margin-bottom: 20px;">Recent Messages</h3>
+                    <div class="message-list">
+                        <div class="msg-item">
+                            <div class="msg-avatar">AR</div>
+                            <div class="msg-content">
+                                <div class="msg-name">Alex Rodriguez</div>
+                                <div class="msg-preview">That sounds great! Let's meet tomorrow...</div>
+                            </div>
+                            <div style="text-align: right; font-size: 12px; color: #9ca3af;">
+                                <div>2m ago</div>
+                                <span class="badge">2</span>
+                            </div>
+                        </div>
+
+                        <div class="msg-item">
+                            <div class="msg-avatar">SK</div>
+                            <div class="msg-content">
+                                <div class="msg-name">Sarah Khan</div>
+                                <div class="msg-preview">Check out this amazing project I found 🎨</div>
+                            </div>
+                            <div style="text-align: right; font-size: 12px; color: #9ca3af;">
+                                <div>15m ago</div>
+                                <span class="badge">1</span>
+                            </div>
+                        </div>
+
+                        <div class="msg-item">
+                            <div class="msg-avatar">JW</div>
+                            <div class="msg-content">
+                                <div class="msg-name">John Wilson</div>
+                                <div class="msg-preview">Thanks for the update! Really helpful 👍</div>
+                            </div>
+                            <div style="text-align: right; font-size: 12px; color: #9ca3af;">
+                                <div>1h ago</div>
+                            </div>
+                        </div>
+
+                        <div class="msg-item">
+                            <div class="msg-avatar">MJ</div>
+                            <div class="msg-content">
+                                <div class="msg-name">Maria Johnson</div>
+                                <div class="msg-preview">Group chat: We're ready for the launch! 🚀</div>
+                            </div>
+                            <div style="text-align: right; font-size: 12px; color: #9ca3af;">
+                                <div>3h ago</div>
+                                <span class="badge danger">5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 15px;">💌 Smart Messaging Features</h3>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">📱</div>
+                                <div class="feature-title">Multi-Format</div>
+                                <div class="feature-desc">Send text, images, voice, video, and emoji</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">👥</div>
+                                <div class="feature-title">Group Chat</div>
+                                <div class="feature-desc">Unlimited members per group</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🗑️</div>
+                                <div class="feature-title">Message Control</div>
+                                <div class="feature-desc">Delete & edit messages anytime</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🔔</div>
+                                <div class="feature-title">Notifications</div>
+                                <div class="feature-desc">Never miss important messages</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTES SECTION -->
+                <div id="notes" class="section">
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn-primary" onclick="createNote()">
+                            ✎ Create New Note
+                        </button>
+                    </div>
+
+                    <div class="notes-grid">
+                        <div class="note-card">
+                            <div class="note-title">📌 Project Ideas</div>
+                            <div class="note-text">• AI Chat Bot Integration
+• Mobile App Redesign
+• Cloud Backup System
+• Real-time Notifications</div>
+                            <div class="note-date">Created: May 8, 2026</div>
+                        </div>
+
+                        <div class="note-card">
+                            <div class="note-title">🎯 Daily Goals</div>
+                            <div class="note-text">✓ Complete project analysis
+✓ Review team feedback
+• Implement new features
+• Test on devices</div>
+                            <div class="note-date">Created: May 10, 2026</div>
+                        </div>
+
+                        <div class="note-card">
+                            <div class="note-title">🔐 Important Codes</div>
+                            <div class="note-text">
+                                <span class="badge success">Locked</span>
+                                This note is protected
+                            </div>
+                            <div class="note-date">Created: May 5, 2026</div>
+                        </div>
+
+                        <div class="note-card">
+                            <div class="note-title">📚 Learning Path</div>
+                            <div class="note-text">• Advanced JavaScript
+• React Framework
+• Node.js Backend
+• Database Design</div>
+                            <div class="note-date">Created: April 28, 2026</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOCIAL SECTION -->
+                <div id="social" class="section">
+                    <h2 style="margin-bottom: 30px;">🌍 Social Hub</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div class="feature-card" style="cursor: auto; text-align: left;">
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                                <div>
+                                    <div style="font-weight: 600;">Sarah Anderson</div>
+                                    <div style="font-size: 12px; color: #9ca3af;">Just now</div>
+                                </div>
+                            </div>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect fill='%236366f1' width='300' height='200'/%3E%3Ctext x='150' y='100' font-size='20' fill='white' text-anchor='middle' dominant-baseline='middle'%3EBeautiful Sunset Photo%3C/text%3E%3C/svg%3E" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="display: flex; gap: 15px; margin-bottom: 10px; font-size: 18px;">
+                                <span style="cursor: pointer;">❤️ 2.4K</span>
+                                <span style="cursor: pointer;">💬 456</span>
+                                <span style="cursor: pointer;">🔄 234</span>
+                                <span style="cursor: pointer;">📤 123</span>
+                            </div>
+                            <div style="color: #9ca3af; font-size: 13px;">Amazing day with amazing people! ✨ #Travel #Nature</div>
+                        </div>
+
+                        <div class="feature-card" style="cursor: auto; text-align: left;">
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--secondary), var(--warning)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">👨</div>
+                                <div>
+                                    <div style="font-weight: 600;">Mike Johnson</div>
+                                    <div style="font-size: 12px; color: #9ca3af;">2 hours ago</div>
+                                </div>
+                            </div>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect fill='%238b5cf6' width='300' height='200'/%3E%3Ctext x='150' y='100' font-size='20' fill='white' text-anchor='middle' dominant-baseline='middle'%3EEpic Gaming Session%3C/text%3E%3C/svg%3E" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="display: flex; gap: 15px; margin-bottom: 10px; font-size: 18px;">
+                                <span style="cursor: pointer;">❤️ 5.2K</span>
+                                <span style="cursor: pointer;">💬 892</span>
+                                <span style="cursor: pointer;">🔄 567</span>
+                                <span style="cursor: pointer;">📤 345</span>
+                            </div>
+                            <div style="color: #9ca3af; font-size: 13px;">Just hit level 99! Amazing gameplay today 🎮 #Gaming #Live</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 20px;">📹 Create New Post</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="alert('Post creation coming soon!')">
+                            <div class="feature-icon">📸</div>
+                            <div class="feature-title">Share Photo</div>
+                            <div class="feature-desc">Upload & share your photos</div>
+                        </div>
+                        <div class="feature-card" onclick="alert('Video upload coming soon!')">
+                            <div class="feature-icon">🎥</div>
+                            <div class="feature-title">Upload Video</div>
+                            <div class="feature-desc">Share videos up to 10GB</div>
+                        </div>
+                        <div class="feature-card" onclick="alert('Reel creation coming soon!')">
+                            <div class="feature-icon">🎬</div>
+                            <div class="feature-title">Create Reel</div>
+                            <div class="feature-desc">Make short viral videos</div>
+                        </div>
+                        <div class="feature-card" onclick="alert('Live streaming coming soon!')">
+                            <div class="feature-icon">📡</div>
+                            <div class="feature-title">Go Live</div>
+                            <div class="feature-desc">Livestream to your followers</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VAULT SECTION -->
+                <div id="vault" class="section">
+                    <h2 style="margin-bottom: 30px;">🔒 Secure Vault</h2>
+
+                    <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <div style="font-size: 40px;">🔐</div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 16px;">Fingerprint Protection Active</div>
+                                <div style="color: #9ca3af; font-size: 13px;">Your vault is secured with biometric authentication</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: rgba(31, 41, 55, 0.6); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div style="font-size: 40px; margin-bottom: 10px;">📷</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">Hidden Photos</div>
+                            <div style="color: #9ca3af; font-size: 13px;">234 items</div>
+                        </div>
+                        <div style="background: rgba(31, 41, 55, 0.6); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div style="font-size: 40px; margin-bottom: 10px;">🎥</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">Hidden Videos</div>
+                            <div style="color: #9ca3af; font-size: 13px;">67 items</div>
+                        </div>
+                        <div style="background: rgba(31, 41, 55, 0.6); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div style="font-size: 40px; margin-bottom: 10px;">📁</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">Hidden Files</div>
+                            <div style="color: #9ca3af; font-size: 13px;">156 items</div>
+                        </div>
+                        <div style="background: rgba(31, 41, 55, 0.6); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div style="font-size: 40px; margin-bottom: 10px;">🗒️</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">Locked Notes</div>
+                            <div style="color: #9ca3af; font-size: 13px;">45 items</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 20px;">🛡️ Security Features</h3>
+                    <div class="security-section">
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">👆</div>
+                                <div>
+                                    <div style="font-weight: 600;">Fingerprint Authentication</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Access vault with your fingerprint</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🔒</div>
+                                <div>
+                                    <div style="font-weight: 600;">Encrypted Storage</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Military-grade encryption</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🌐</div>
+                                <div>
+                                    <div style="font-weight: 600;">Cloud Backup</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Secure backup to cloud</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🚨</div>
+                                <div>
+                                    <div style="font-weight: 600;">Failed Login Alert</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Notify on suspicious activity</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS SECTION -->
+                <div id="settings" class="section">
+                    <h2 style="margin-bottom: 30px;">⚙️ Settings</h2>
+
+                    <div class="security-section">
+                        <h3 style="margin-bottom: 20px;">🔒 Security</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🔑</div>
+                                <div>
+                                    <div style="font-weight: 600;">Change Password</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Update your security credentials</div>
+                                </div>
+                            </div>
+                            <button class="btn-primary" style="padding: 8px 16px;">Change</button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🔐</div>
+                                <div>
+                                    <div style="font-weight: 600;">Two-Factor Authentication</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Add extra layer of security</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">📱</div>
+                                <div>
+                                    <div style="font-weight: 600;">App Lock</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Lock app with biometric</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="security-section" style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 20px;">🎨 Appearance</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🌙</div>
+                                <div>
+                                    <div style="font-weight: 600;">Dark Mode</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Easier on the eyes</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">📏</div>
+                                <div>
+                                    <div style="font-weight: 600;">Font Size</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Adjust text size</div>
+                                </div>
+                            </div>
+                            <select style="background: rgba(0, 0, 0, 0.3); color: white; border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+                                <option>Small</option>
+                                <option selected>Medium</option>
+                                <option>Large</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="security-section" style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 20px;">🔔 Notifications</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">💬</div>
+                                <div>
+                                    <div style="font-weight: 600;">Message Notifications</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Get alerts for new messages</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">📞</div>
+                                <div>
+                                    <div style="font-weight: 600;">Call Notifications</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Alerts for incoming calls</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">❤️</div>
+                                <div>
+                                    <div style="font-weight: 600;">Like Notifications</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">When someone likes your post</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch active">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="security-section" style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 20px;">👥 Privacy</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🔒</div>
+                                <div>
+                                    <div style="font-weight: 600;">Private Account</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Only approved followers can see posts</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">👁️</div>
+                                <div>
+                                    <div style="font-weight: 600;">Hide Online Status</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Don't show when you're online</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <div class="security-icon">🚫</div>
+                                <div>
+                                    <div style="font-weight: 600;">Block Users</div>
+                                    <div style="color: #9ca3af; font-size: 13px;">Manage your blocked list</div>
+                                </div>
+                            </div>
+                            <button class="btn-primary" style="padding: 8px 16px;">Manage</button>
+                        </div>
+                    </div>
+
+                    <div class="security-section" style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 20px;">ℹ️ About</h3>
+                        <div class="security-item">
+                            <div style="font-weight: 600;">App Version</div>
+                            <div style="color: #9ca3af;">2.1.0 (Latest)</div>
+                        </div>
+                        <div class="security-item">
+                            <div style="font-weight: 600;">Last Updated</div>
+                            <div style="color: #9ca3af;">May 10, 2026</div>
+                        </div>
+                        <div class="security-item">
+                            <button class="btn-primary" style="margin-top: 10px;">Check for Updates</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let callActive = false;
+        let callDurationSeconds = 0;
+        let callInterval = null;
+
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+
+            // Update nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.closest('.nav-link').classList.add('active');
+
+            // Update header title
+            const titles = {
+                'home': 'Welcome to ZubaIR AI',
+                'chat': '💬 Super AI Chat',
+                'call': '📞 AI Call System',
+                'messaging': '📨 Messages',
+                'notes': '📝 Notes',
+                'social': '🌍 Social Hub',
+                'vault': '🔒 Secure Vault',
+                'settings': '⚙️ Settings'
+            };
+            document.getElementById('pageTitle').textContent = titles[sectionId] || 'ZubaIR AI';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesContainer = document.querySelector('.messages');
+                
+                // Add user message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message user';
+                userMsg.innerHTML = `<div class="message-content">${message}</div>`;
+                messagesContainer.appendChild(userMsg);
+
+                input.value = '';
+
+                // Simulate AI typing
+                setTimeout(() => {
+                    const typingMsg = document.createElement('div');
+                    typingMsg.className = 'message ai';
+                    typingMsg.innerHTML = `<div class="message-content"><div class="typing"><span></span><span></span><span></span></div></div>`;
+                    messagesContainer.appendChild(typingMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                    // Replace typing with AI response
+                    setTimeout(() => {
+                        typingMsg.innerHTML = `<div class="message-content">I understand your question! I'm processing your request with advanced AI capabilities. You can ask me about code, images, translations, PDFs, and much more!</div>`;
+                    }, 2000);
+                }, 500);
+
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        function acceptCall() {
+            callActive = true;
+            callDurationSeconds = 0;
+            
+            // Update UI
+            document.querySelector('.call-status').textContent = 'Call Connected';
+            document.querySelector('.call-status').style.color = '#10b981';
+            
+            // Start timer
+            callInterval = setInterval(() => {
+                callDurationSeconds++;
+                const minutes = Math.floor(callDurationSeconds / 60);
+                const seconds = callDurationSeconds % 60;
+                document.getElementById('callDuration').textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+
+            alert('✓ Call Connected Successfully!\n\nYou are now connected to ZubaIR AI. All features are active.');
+        }
+
+        function rejectCall() {
+            alert('Call Rejected');
+            callDurationSeconds = 0;
+            document.getElementById('callDuration').textContent = '00:00';
+            document.querySelector('.call-status').textContent = 'Incoming Call...';
+        }
+
+        function toggleMute() {
+            alert('🔇 Microphone Muted');
+        }
+
+        function toggleSpeaker() {
+            alert('📢 Speaker Activated');
+        }
+
+        function startNewMessage() {
+            alert('✉️ Start composing a new message');
+        }
+
+        function createNote() {
+            const noteTitle = prompt('Enter note title:');
+            if (noteTitle) {
+                alert(`📝 Note "${noteTitle}" created successfully!`);
+            }
+        }
+
+        // Allow Enter key to send message
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
